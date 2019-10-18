@@ -3,7 +3,6 @@ import argparse
 import feedparser
 import requests
 from fuzzywuzzy import process
-from pprint import pprint
 from utils import locationMap, langMap, topicMap, top_news_url, topic_url
 
 
@@ -63,7 +62,7 @@ class NewsClient:
         function to get news articles
         """
         url = top_news_url + 'search?q=' +self.query
-        print(url)
+
         if self.topic is None or self.topic == 'Top Stories':
             resp = requests.get(url, params=self.params_dict)
         else:
@@ -84,13 +83,15 @@ class NewsClient:
         feed = feedparser.parse(content)
         articles = []
         for entry in feed['entries'][:self.max_results]:
-            pprint(entry)
+
             article = {
                 'title': entry['title'],
                 'link': entry['link']
             }
             try:
-                article['media'] = entry['media_content'][0]['url']
+                s = entry['title']
+
+                article['media'] = s[s.rfind('-', 0, len(s))+2:]
             except KeyError:
                 article['media'] = None
 
